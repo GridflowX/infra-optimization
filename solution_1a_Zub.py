@@ -17,7 +17,7 @@ def solution_1a(points, stc, stic, ec,  result_of_cost, connected_edges, speed, 
   # Parameters
   time = {(i, j): ((((points[i][0] - points[j][0])**2) + ((points[i][1] - points[j][1])**2))**0.5)/speed for (i, j) in arcs}  # t_ij
   cost = {(i, j): edge_cost * ((((points[i][0] - points[j][0])**2) + ((points[i][1] - points[j][1])**2))**0.5) for (i, j) in arcs}
-  capacity = {arc: capacity for arc in arcs} # u_ij
+  capacity = capacity # u_ij
 
   # print(f"nodes : {nodes}")
   # print(f"arcs : {arcs}")

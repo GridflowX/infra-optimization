@@ -79,7 +79,7 @@ def LR_2(points, selected_edges, lamda, beeta, speed, capacity, commodities):
     beta = beeta
 
     t_ij = {(i, j): ((((points[i][0] - points[j][0])**2) + ((points[i][1] - points[j][1])**2))**0.5)/speed for (i, j) in arcs}  # t_ij
-    u_ij = {arc: capacity for arc in arcs} # u_ij
+    u_ij = capacity # u_ij
 
     # print("nodes:",nodes)
     # print("arcs:",arcs)
