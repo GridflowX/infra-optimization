@@ -1,14 +1,9 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import random
 import pulp
+from pulp import LpProblem, LpMinimize, lpSum
 
-def LR_1(points, selected_edges, stc, stic, ec, lamda, alphaa, commodities):
+def LR_1(points, arcs, station_cost, steiner_cost, edge_cost_per_unit, lambda_k, alpha, commodities):
   print("\n---------------------------------LR1 Print statements------------------------")
   nodes = [i for i in range(len(points))]
-  arcs = selected_edges
-  lambda_k = lamda
-  alpha = alphaa
   m1 = (2*(len(nodes)))-2
   m2 = len(arcs)
 
@@ -17,19 +12,10 @@ def LR_1(points, selected_edges, stc, stic, ec, lamda, alphaa, commodities):
   # print("lambda list:", lamda)
   # print("lambdas:",lambda_k)
   # print("alpha:",alpha)
-  print("m1:",m1)
-  print("m2:",m2)
-
-  # Costs
-  station_cost = stc  # in lakhs
-  steiner_cost = stic  # in lakhs
-  edge_cost_per_unit = ec  # in lakhs per km
-  stations_with_steiner_cost = (station_cost * (len(nodes)-1)) + steiner_cost
+  # print("m1:",m1)
+  # print("m2:",m2)
 
   cost = {(i, j): edge_cost_per_unit * ((((points[i][0] - points[j][0])**2) + ((points[i][1] - points[j][1])**2))**0.5) for (i,j) in arcs}
-
-  # print("cost:",cost)
-  # print()
 
   # Define the LP problem
   lp = pulp.LpProblem("LR1_Optimization", pulp.LpMinimize)
@@ -38,22 +24,11 @@ def LR_1(points, selected_edges, stc, stic, ec, lamda, alphaa, commodities):
   y = pulp.LpVariable.dicts("y", arcs, cat="Binary")
 
   # Objective function: Minimize total cost 6a
-  lp += pulp.lpSum((alpha * cost[i, j] - pulp.lpSum(lambda_k[k, i, j] for k in commodities)) * y[i, j] for (i, j) in arcs)
+  lp += pulp.lpSum((alpha * cost[i, j] - pulp.lpSum(lambda_k[k, i, j] for k in commodities)) * y[i, j] for (i, j) in arcs) + station_cost + steiner_cost
 
   # Constraints 6b
   lp += pulp.lpSum(y[i, j] for (i, j) in arcs) >= m1  # Lower bound
   lp += pulp.lpSum(y[i, j] for (i, j) in arcs) <= m2  # Upper bound
-
-  # # Print the Objective Function
-  # print("Objective Function:")
-  # print(lp.objective)  # Inbuilt method
-  # print("-" * 40)
-
-  # # Print All Constraints
-  # print("Constraints:")
-  # for name, constraint in lp.constraints.items():
-  #     print(f"{name}: {constraint}")
-  # print("-" * 40)
 
   # Solve the problem
   lp.solve()
@@ -61,25 +36,19 @@ def LR_1(points, selected_edges, stc, stic, ec, lamda, alphaa, commodities):
   # Output the results
   print("Status:", pulp.LpStatus[lp.status])
   print("Objective Value:", pulp.value(lp.objective))
-  for (i, j) in arcs:
-      print(f"y({i}, {j}):", y[i, j].varValue)
+  # for (i, j) in arcs:
+  #     print(f"y({i}, {j}):", y[i, j].varValue)
 
   print("-----------------------------------------------------------------------------\n")
   
   return pulp.value(lp.objective), {(i, j) : y[i, j].varValue for (i, j) in arcs}
 
-from pulp import LpProblem, LpMinimize, LpVariable, lpSum
-
-def LR_2(points, selected_edges, lamda, beeta, speed, capacity, commodities):
+def LR_2(points, arcs, lambda_k, beta, speed, u_ij, commodities):
     print("\n---------------------------------LR2 Print statements------------------------")
     # Define the parameters
     nodes = [i for i in range(len(points))]
-    arcs = selected_edges
-    lambda_k = lamda
-    beta = beeta
 
     t_ij = {(i, j): ((((points[i][0] - points[j][0])**2) + ((points[i][1] - points[j][1])**2))**0.5)/speed for (i, j) in arcs}  # t_ij
-    u_ij = capacity # u_ij
 
     # print("nodes:",nodes)
     # print("arcs:",arcs)
@@ -185,28 +154,25 @@ def LR_2(points, selected_edges, lamda, beeta, speed, capacity, commodities):
     else:
         # Output results if feasible
         print("Objective Value:", pulp.value(prob.objective))
-        for k in commodities:
-          print(f"----------------------------Commodity {k}:-----------------------------")
-          for (i, j) in arcs:
-            print(f"Flow on arc ({i}, {j}):", f[k, i, j].varValue)
-          print("------------------------------------------------------------------------\n")
+        # for k in commodities:
+        #   print(f"----------------------------Commodity {k}:-----------------------------")
+        #   for (i, j) in arcs:
+        #     print(f"Flow on arc ({i}, {j}):", f[k, i, j].varValue)
+        #   print("------------------------------------------------------------------------\n")
 
-        print("--------------------------y_feasible------------------------------")
+        # print("--------------------------y_feasible------------------------------")
         
         y_feasible = {
             (i, j): int(any(f[k, i, j].varValue > 0 for k in commodities))
             for (i, j) in arcs
         }
-
-        print(y_feasible)
-        print("------------------------------------------------------------------------\n")
+        # print("------------------------------------------------------------------------\n")
 
         print("-----------------------------------------------------------------------------\n")
       
         return pulp.value(prob.objective), {(k, i, j): f[k, i, j].varValue for (k, i, j) in f.keys()}, y_feasible
 
 def Solution_Zlb(points, selected_edges, stc, stic, ec, lambda_n, speed, capacity, alpha, beta, commodities):
-  # print(selected_edges)
   lr1_result, yij = LR_1(points, selected_edges, stc, stic, ec, lambda_n, alpha, commodities)
   lr2_result, fij, y_feasible = LR_2(points, selected_edges, lambda_n, beta, speed, capacity, commodities)
   print("LR1 Solution:", lr1_result)

@@ -52,12 +52,4 @@ def update_lambda(lambda_n, f_ij, y_ij, Z_min_UB, LD_lambda, commodities, arcs, 
                 0  # Ensure non-negativity
             )
 
-    # print(f"\n------------------ in update_lambda function ----------------------")
-    # print(f"Lambda_n: {lambda_n}")
-    # print(f"s_lambda: {s_lambda}")
-    # print(f"theta_n: {theta_n}")
-    # print(f"Denominator: {denominator}")
-    # print(f"Lambda_new: {lambda_new}")
-    # print("---------------------------------------------------------------------\n")
-
     return lambda_new, s_lambda, theta_n

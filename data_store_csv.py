@@ -3,7 +3,6 @@ import os
 
 def write_to_csv(data):
   filename = "data.csv"
-  file_exists = os.path.isfile(filename)
 
   # Field names (CSV headers)
   fieldnames = ["Iteration", "ZLB", "ZUB", "GAP", "Lambda", "theta_n", "fij", "yij", "s_lambda", "yij_1a", "fij_1a"]
