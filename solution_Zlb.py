@@ -1,7 +1,7 @@
 import pulp
 from pulp import LpProblem, LpMinimize, lpSum
 
-def LR_1(points, arcs, station_cost, steiner_cost, edge_cost_per_unit, lambda_k, alpha, commodities):
+def LR_1(points, stations, arcs, station_cost, steiner_cost, edge_cost_per_unit, lambda_k, alpha, commodities):
   print("\n---------------------------------LR1 Print statements------------------------")
   nodes = [i for i in range(len(points))]
   m1 = (2*(len(nodes)))-2
@@ -14,6 +14,8 @@ def LR_1(points, arcs, station_cost, steiner_cost, edge_cost_per_unit, lambda_k,
   # print("alpha:",alpha)
   # print("m1:",m1)
   # print("m2:",m2)
+
+  initial_cost = station_cost + sum((edge_cost_per_unit * (stations[i][0] - stations[j][0])**2 + (stations[i][1] - stations[j][1])**2)**0.5 for (i, j) in stations)
 
   cost = {(i, j): edge_cost_per_unit * ((((points[i][0] - points[j][0])**2) + ((points[i][1] - points[j][1])**2))**0.5) for (i,j) in arcs}
 
@@ -30,18 +32,28 @@ def LR_1(points, arcs, station_cost, steiner_cost, edge_cost_per_unit, lambda_k,
   lp += pulp.lpSum(y[i, j] for (i, j) in arcs) >= m1  # Lower bound
   lp += pulp.lpSum(y[i, j] for (i, j) in arcs) <= m2  # Upper bound
 
+  # breaking point constraint
+  lp += (
+    station_cost + steiner_cost + pulp.lpSum(cost[i, j] for (i, j) in arcs) <= (initial_cost - 0.000001)
+  )
+
   # Solve the problem
   lp.solve()
 
-  # Output the results
-  print("Status:", pulp.LpStatus[lp.status])
-  print("Objective Value:", pulp.value(lp.objective))
-  # for (i, j) in arcs:
-  #     print(f"y({i}, {j}):", y[i, j].varValue)
+  if lp.status == -1:
+    print("Initial Setup is better than addition of steiner\n)")
 
-  print("-----------------------------------------------------------------------------\n")
-  
-  return pulp.value(lp.objective), {(i, j) : y[i, j].varValue for (i, j) in arcs}
+    return initial_cost, {(i, j): 1 if i < len(stations) and j < len(stations) else 0 for (i, j) in arcs}  
+  else:
+    # Output the results
+    print("Status:", pulp.LpStatus[lp.status])
+    print("Objective Value:", pulp.value(lp.objective))
+    # for (i, j) in arcs:
+    #     print(f"y({i}, {j}):", y[i, j].varValue)
+
+    print("-----------------------------------------------------------------------------\n")
+    
+    return pulp.value(lp.objective), {(i, j) : y[i, j].varValue for (i, j) in arcs}
 
 def LR_2(points, arcs, lambda_k, beta, speed, u_ij, commodities):
     print("\n---------------------------------LR2 Print statements------------------------")
@@ -172,8 +184,8 @@ def LR_2(points, arcs, lambda_k, beta, speed, u_ij, commodities):
       
         return pulp.value(prob.objective), {(k, i, j): f[k, i, j].varValue for (k, i, j) in f.keys()}, y_feasible
 
-def Solution_Zlb(points, selected_edges, stc, stic, ec, lambda_n, speed, capacity, alpha, beta, commodities):
-  lr1_result, yij = LR_1(points, selected_edges, stc, stic, ec, lambda_n, alpha, commodities)
+def Solution_Zlb(points, stations, selected_edges, stc, stic, ec, lambda_n, speed, capacity, alpha, beta, commodities):
+  lr1_result, yij = LR_1(points, stations, selected_edges, stc, stic, ec, lambda_n, alpha, commodities)
   lr2_result, fij, y_feasible = LR_2(points, selected_edges, lambda_n, beta, speed, capacity, commodities)
   print("LR1 Solution:", lr1_result)
   print("LR2 Solution:", lr2_result)

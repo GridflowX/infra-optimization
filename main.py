@@ -6,12 +6,12 @@ import numpy as np
 import random
 from plots import yij_graph, fij_graph, individual_fij_graph, plot_bounds_vs_iteration, plot_gap_vs_iteration
 
-def main(stations, setiners, intermediate_nodes, edges_input, station_cost, steiner_cost, speed, alpha, beta, stop_criteria, capacity, commodities):
+def main(stations, setiners, intermediate_nodes, edges_input, station_cost, steiner_cost, speed, alpha, beta, stop_criteria, capacity, commodities, scale_factor):
     # Total nodes including stations, setiners and intermediate nodes
     input_points = stations + setiners + intermediate_nodes
 
     #scale the input graph to have overall distance to target lenth
-    adjusted_points, total_perimeter = adjust_polygon_to_edge_length(input_points, edges_input, 140)
+    adjusted_points, total_perimeter = adjust_polygon_to_edge_length(input_points, edges_input, scale_factor)
 
     #plot the scaled graph
     plot_scaled_polygon(adjusted_points, total_perimeter, edges_input, stations, setiners, intermediate_nodes)
@@ -38,7 +38,7 @@ def main(stations, setiners, intermediate_nodes, edges_input, station_cost, stei
     n = 0
 
     while True:
-        zub, zlb, fij, yij, y_ub, f_ub = get_zub_zlb(optimized_points, station_cost, steiner_cost, edge_cost, lambda_k, speed, capacity, alpha, beta, edges_input, commodities)
+        zub, zlb, fij, yij, y_ub, f_ub = get_zub_zlb(optimized_points, stations, station_cost, steiner_cost, edge_cost, lambda_k, speed, capacity, alpha, beta, edges_input, commodities)
         
         gap = zub - zlb
 
@@ -91,13 +91,14 @@ if __name__ == "__main__":
 
     # Initialize the costs
     station_cost = len(stations) * 1
-    steiner_cost = len(setiners) * 6
+    steiner_cost = len(setiners) * 2
     edge_cost = 1
 
     speed = 30
     alpha = 0.5
     beta = 0.5
     stop_criteria = 1e-3
+    scale_factor = 1
 
     # Capacity of the edges
     capacity = {
@@ -119,4 +120,4 @@ if __name__ == "__main__":
         5 : (2, 1, 10),
     }
 
-    main(stations, setiners, intermediate_nodes, edges_input, station_cost, steiner_cost, speed, alpha, beta, stop_criteria, capacity, commodities)
+    main(stations, setiners, intermediate_nodes, edges_input, station_cost, steiner_cost, speed, alpha, beta, stop_criteria, capacity, commodities, scale_factor)
