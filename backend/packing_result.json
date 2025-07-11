@@ -1,0 +1,19 @@
+{
+  "warehouse": {
+    "width": 1000,
+    "height": 10000,
+    "clearance": 10
+  },
+  "placements": [
+    {
+      "id": 39,
+      "x": 0,
+      "y": 0,
+      "width": 181,
+      "height": 200,
+      "exit_edge": null,
+      "path_length": Infinity,
+      "retrieval_path": null
+    }
+  ]
+}
