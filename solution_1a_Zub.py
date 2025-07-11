@@ -1,11 +1,9 @@
 import pulp
 import random
 
-def solution_1a(points, stations, station_cost, steiner_cost, edge_cost, arcs, speed, capacity, alpha, beta, commodities, y_feasible):
+def solution_1a(points, stations, edge_cost, arcs, speed, capacity, alpha, beta, commodities, y_feasible):
   print(f"\n----------------------in solution 1a ZUB----------------\n")
   nodes = [i for i in range(len(points))]
-
-  initial_cost = station_cost + sum((edge_cost * (stations[i][0] - stations[j][0])**2 + (stations[i][1] - stations[j][1])**2)**0.5 for (i, j) in stations)
 
   time = {(i, j): ((((points[i][0] - points[j][0])**2) + ((points[i][1] - points[j][1])**2))**0.5)/speed for (i, j) in arcs}  # t_ij
   cost = {(i, j): edge_cost * ((((points[i][0] - points[j][0])**2) + ((points[i][1] - points[j][1])**2))**0.5) for (i, j) in arcs}
@@ -29,7 +27,7 @@ def solution_1a(points, stations, station_cost, steiner_cost, edge_cost, arcs, s
   y = y_feasible.copy()
 
   # Objective function: Minimize cost
-  lp += (alpha * (pulp.lpSum(cost[i, j] * y[i, j] for (i, j) in arcs)) + station_cost + steiner_cost) + (beta * pulp.lpSum(flow[k, i, j] * time[i, j] for k in commodities for (i, j) in arcs))
+  lp += (alpha * (pulp.lpSum(cost[i, j] * y[i, j] for (i, j) in arcs))) + (beta * pulp.lpSum(flow[k, i, j] * time[i, j] for k in commodities for (i, j) in arcs))
 
   # constraint 1b
   for k in commodities:
@@ -68,11 +66,6 @@ def solution_1a(points, stations, station_cost, steiner_cost, edge_cost, arcs, s
   for k in commodities:
     for (i, j) in arcs:
       lp += flow[k, i, j] >= 0
-
-  # breaking point constraint
-  lp += (
-    station_cost + steiner_cost + pulp.lpSum(cost[i, j] for (i, j) in arcs) <= (initial_cost - 0.000001)
-  )
 
   # Solve the problem
   lp.solve()
@@ -113,7 +106,7 @@ def solution_1a(points, stations, station_cost, steiner_cost, edge_cost, arcs, s
 
     print("\n-----------------------------------------------------------\n")
 
-    return initial_cost, {(i, j): y[i, j] for (i, j) in arcs}, {(k, i, j): flow[k, i, j].varValue for (i, j) in arcs for k in commodities}
+    return {(i, j): y[i, j] for (i, j) in arcs}, {(k, i, j): flow[k, i, j].varValue for (i, j) in arcs for k in commodities}
     
   else:
       # Output results if feasible

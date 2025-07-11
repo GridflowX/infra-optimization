@@ -6,7 +6,7 @@ import numpy as np
 import random
 from plots import yij_graph, fij_graph, individual_fij_graph, plot_bounds_vs_iteration, plot_gap_vs_iteration
 
-def main(stations, setiners, intermediate_nodes, edges_input, station_cost, steiner_cost, speed, alpha, beta, stop_criteria, capacity, commodities, scale_factor):
+def main(stations, setiners, intermediate_nodes, edges_input, edge_cost, speed, alpha, beta, stop_criteria, capacity, commodities, scale_factor):
     # Total nodes including stations, setiners and intermediate nodes
     input_points = stations + setiners + intermediate_nodes
 
@@ -38,7 +38,7 @@ def main(stations, setiners, intermediate_nodes, edges_input, station_cost, stei
     n = 0
 
     while True:
-        zub, zlb, fij, yij, y_ub, f_ub = get_zub_zlb(optimized_points, stations, station_cost, steiner_cost, edge_cost, lambda_k, speed, capacity, alpha, beta, edges_input, commodities)
+        zub, zlb, fij, yij, y_ub, f_ub = get_zub_zlb(optimized_points, stations, edge_cost, lambda_k, speed, capacity, alpha, beta, edges_input, commodities)
         
         gap = zub - zlb
 
@@ -90,8 +90,6 @@ if __name__ == "__main__":
     edges_input = [(0, 1), (0, 2), (1, 2), (0, 3), (3, 1), (3, 2)]
 
     # Initialize the costs
-    station_cost = len(stations) * 1
-    steiner_cost = len(setiners) * 2
     edge_cost = 1
 
     speed = 30
@@ -120,4 +118,4 @@ if __name__ == "__main__":
         5 : (2, 1, 10),
     }
 
-    main(stations, setiners, intermediate_nodes, edges_input, station_cost, steiner_cost, speed, alpha, beta, stop_criteria, capacity, commodities, scale_factor)
+    main(stations, setiners, intermediate_nodes, edges_input, edge_cost, speed, alpha, beta, stop_criteria, capacity, commodities, scale_factor)
