@@ -1,0 +1,234 @@
+{
+    "nodes": [
+        {
+            "id": 0,
+            "x": 0,
+            "y": 1,
+            "type": "station"
+        },
+        {
+            "id": 1,
+            "x": 1,
+            "y": 2,
+            "type": "station"
+        },
+        {
+            "id": 2,
+            "x": 1,
+            "y": 0,
+            "type": "station"
+        },
+        {
+            "id": 3,
+            "x": 2,
+            "y": 2,
+            "type": "station"
+        },
+        {
+            "id": 4,
+            "x": 2,
+            "y": 0,
+            "type": "station"
+        },
+        {
+            "id": 5,
+            "x": 3,
+            "y": 2,
+            "type": "station"
+        },
+        {
+            "id": 6,
+            "x": 3,
+            "y": 0,
+            "type": "station"
+        },
+        {
+            "id": 7,
+            "x": 1,
+            "y": 1,
+            "type": "steiner"
+        },
+        {
+            "id": 8,
+            "x": 2,
+            "y": 1,
+            "type": "steiner"
+        },
+        {
+            "id": 9,
+            "x": 3,
+            "y": 1,
+            "type": "steiner"
+        }
+    ],
+    "edges": [
+        {
+            "source": 0,
+            "target": 7,
+            "length": 1.0
+        },
+        {
+            "source": 7,
+            "target": 1,
+            "length": 1.0
+        },
+        {
+            "source": 7,
+            "target": 2,
+            "length": 1.0
+        },
+        {
+            "source": 7,
+            "target": 8,
+            "length": 1.0
+        },
+        {
+            "source": 8,
+            "target": 3,
+            "length": 1.0
+        },
+        {
+            "source": 8,
+            "target": 4,
+            "length": 1.0
+        },
+        {
+            "source": 8,
+            "target": 9,
+            "length": 1.0
+        },
+        {
+            "source": 9,
+            "target": 5,
+            "length": 1.0
+        },
+        {
+            "source": 9,
+            "target": 6,
+            "length": 1.0
+        },
+        {
+            "source": 2,
+            "target": 7,
+            "length": 1.0
+        },
+        {
+            "source": 8,
+            "target": 7,
+            "length": 1.0
+        },
+        {
+            "source": 3,
+            "target": 8,
+            "length": 1.0
+        },
+        {
+            "source": 4,
+            "target": 8,
+            "length": 1.0
+        },
+        {
+            "source": 5,
+            "target": 9,
+            "length": 1.0
+        }
+    ],
+    "flows": [
+        {
+            "commodity": 0,
+            "source": 0,
+            "target": 7,
+            "flow": 52.0
+        },
+        {
+            "commodity": 3,
+            "source": 0,
+            "target": 7,
+            "flow": 40.0
+        },
+        {
+            "commodity": 5,
+            "source": 7,
+            "target": 1,
+            "flow": 115.0
+        },
+        {
+            "commodity": 3,
+            "source": 7,
+            "target": 2,
+            "flow": 40.0
+        },
+        {
+            "commodity": 0,
+            "source": 7,
+            "target": 8,
+            "flow": 52.0
+        },
+        {
+            "commodity": 4,
+            "source": 7,
+            "target": 8,
+            "flow": 30.0
+        },
+        {
+            "commodity": 0,
+            "source": 8,
+            "target": 3,
+            "flow": 52.0
+        },
+        {
+            "commodity": 4,
+            "source": 8,
+            "target": 4,
+            "flow": 30.0
+        },
+        {
+            "commodity": 1,
+            "source": 8,
+            "target": 9,
+            "flow": 12.0
+        },
+        {
+            "commodity": 1,
+            "source": 9,
+            "target": 5,
+            "flow": 12.0
+        },
+        {
+            "commodity": 2,
+            "source": 9,
+            "target": 6,
+            "flow": 25.0
+        },
+        {
+            "commodity": 4,
+            "source": 2,
+            "target": 7,
+            "flow": 30.0
+        },
+        {
+            "commodity": 5,
+            "source": 8,
+            "target": 7,
+            "flow": 115.0
+        },
+        {
+            "commodity": 1,
+            "source": 3,
+            "target": 8,
+            "flow": 12.0
+        },
+        {
+            "commodity": 5,
+            "source": 4,
+            "target": 8,
+            "flow": 115.0
+        },
+        {
+            "commodity": 2,
+            "source": 5,
+            "target": 9,
+            "flow": 25.0
+        }
+    ]
+}
