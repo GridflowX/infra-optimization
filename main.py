@@ -127,13 +127,29 @@ def main():
     if result:
         print(f"\nPacking completed successfully!")
         print(f"Placed {len(result)} rectangles")
+        print(f"Result type: {type(result)}")
+        print(f"Result length: {len(result) if isinstance(result, list) else 'Not a list'}")
         
         # Save to JSON file
         save_result_to_file(result, args.output)
         
         # Create CSV files
+        print("Creating packages.csv...")
         create_packages_csv(result, "packages.csv")
+        print("Creating retrieval.csv...")
         create_retrieval_csv(result, "retrieval.csv")
+        
+        # Check if files were created
+        import os
+        if os.path.exists("packages.csv"):
+            print("✅ packages.csv was created successfully")
+        else:
+            print("❌ packages.csv was NOT created")
+            
+        if os.path.exists("retrieval.csv"):
+            print("✅ retrieval.csv was created successfully")
+        else:
+            print("❌ retrieval.csv was NOT created")
         
         # Print first few placements as example
         if result:

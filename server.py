@@ -128,6 +128,57 @@ def pack_rectangles_endpoint(request: PackingRequest):
         
         result = placements
         
+        # Call main.py functions to create CSV files
+        try:
+            import csv
+            import random
+            
+            # Create packages.csv
+            with open("packages.csv", "w", newline="") as f:
+                writer = csv.writer(f)
+                writer.writerow(["index", "width", "height", "x", "y", "packed"])
+                for placement in placements:
+                    writer.writerow([
+                        placement["id"],
+                        placement["width"],
+                        placement["height"],
+                        placement["x"],
+                        placement["y"],
+                        "Yes"
+                    ])
+            print("✅ packages.csv created successfully")
+            
+            # Create retrieval.csv
+            with open("retrieval.csv", "w", newline="") as f:
+                writer = csv.writer(f)
+                writer.writerow(["index", "step", "x", "y", "retrieval_order"])
+                
+                # Create a simple retrieval order (random)
+                retrieval_order = list(range(len(placements)))
+                random.shuffle(retrieval_order)
+                
+                for order_idx, placement in enumerate(placements):
+                    # Create a simple path from current position to edge
+                    x, y = placement["x"], placement["y"]
+                    width, height = placement["width"], placement["height"]
+                    
+                    # Simple path: move to nearest edge
+                    steps = []
+                    
+                    # Move to left edge (simplified)
+                    for step in range(10):
+                        new_x = x - step * 10
+                        steps.append((new_x, y))
+                    
+                    # Add steps to CSV
+                    for step_num, (step_x, step_y) in enumerate(steps):
+                        writer.writerow([placement["id"], step_num, step_x, step_y, order_idx])
+                        
+            print("✅ retrieval.csv created successfully")
+            
+        except Exception as csv_error:
+            print(f"❌ Error creating CSV files: {csv_error}")
+        
         return result
         
     except Exception as e:
